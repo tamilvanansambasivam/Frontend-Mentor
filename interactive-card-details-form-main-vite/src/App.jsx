@@ -29,12 +29,12 @@ export default function App() {
 
               <div>
                 <h2 className="text-white text-xl lg:text-3xl mb-6 tracking-widest">
-                  {cardNumber}
+                  {cardNumber ? cardNumber : "0000 0000 0000 0000"}
                 </h2>
 
                 <ul className="flex items-center justify-between">
                   <li className="text-white uppercase text-base lg:text-xl tracking-widest">
-                    {name}
+                    {name ? name : "Jane Appleseed"}
                   </li>
                   <li className="text-white text-base lg:text-xl tracking-widest">
                     {format(new Date(date), "MM/yy")}
@@ -45,7 +45,7 @@ export default function App() {
 
             <article className="back-card relative lg:ml-20">
               <p className="absolute right-10 text-lg lg:text-xl text-white tracking-widest">
-                {cvc}
+                {cvc ? cvc : "000"}
               </p>
             </article>
           </div>

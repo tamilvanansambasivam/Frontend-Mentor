@@ -7,6 +7,9 @@ export default {
         SpaceGrotesk: ["Space Grotesk", "sans-serif"],
       },
       colors: {
+        // Linear gradient (active input border): hsl(249, 99%, 64%) to hsl(278, 94%, 30%)
+        "FM-grad-start": " hsl(249, 99%, 64%)",
+        "FM-grad-end": "hsl(278, 94%, 30%)",
         "white-FM": "hsl(0, 0%, 100%)",
         "light-grayish-violet": "hsl(270, 3%, 87%)",
         "dark-grayish-violet": " hsl(279, 6%, 55%)",
