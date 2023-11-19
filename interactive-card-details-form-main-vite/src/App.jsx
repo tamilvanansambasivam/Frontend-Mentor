@@ -24,42 +24,84 @@ export default function App() {
   const [cvc, setCvc] = useState("");
   const [cvcError, setCvcError] = useState("");
 
-  // Helper function to check for valid card number format
+  const isNameValid = (value) => {
+    const namePattern = /^[a-zA-Z ]+$/;
+    return namePattern.test(value);
+  };
+
   const isCardNumberValid = (value) => {
     const cardNumberPattern = /^\d{4} \d{4} \d{4} \d{4}$/;
     return cardNumberPattern.test(value);
   };
 
+  const isMonthValid = (value) => {
+    const monthPattern = /^(0[1-9]|1[0-2])$/;
+    return monthPattern.test(value);
+  };
+
+  const isYearValid = (value) => {
+    const yearPattern = /^\d{2}$/;
+    return yearPattern.test(value);
+  };
+
+  const isCvcValid = (value) => {
+    const cvcPattern = /^\d+$/;
+    return cvcPattern.test(value);
+  };
+
   const handleNameChange = (value) => {
     setName(value);
-    // Validate name (replace this with your actual validation logic)
-    setNameError(value.trim() ? "" : "Name is required");
+    setNameError(
+      value.trim() === ""
+        ? "Can't be blank"
+        : isNameValid(value)
+        ? ""
+        : "Invalid name format"
+    );
   };
 
   const handleCardNumberChange = (value) => {
     setCardNumber(value);
-    // Validate card number format
     setCardNumberError(
-      isCardNumberValid(value) ? "" : "Invalid card number format"
+      value.trim() === ""
+        ? "Can't be blank"
+        : isCardNumberValid(value)
+        ? ""
+        : "Wrong format, numbers only"
     );
   };
 
   const handleMonthChange = (value) => {
     setMonthValue(value.slice(0, 2));
-    // Validate month (replace this with your actual validation logic)
-    setMonthError(value.trim() ? "" : "Month is required");
+    setMonthError(
+      value.trim() === ""
+        ? "Can't be blank"
+        : isMonthValid(value)
+        ? ""
+        : "Invalid month"
+    );
   };
 
   const handleYearChange = (value) => {
     setYearValue(value.slice(0, 2));
-    // Validate year (replace this with your actual validation logic)
-    setYearError(value.trim() ? "" : "Year is required");
+    setYearError(
+      value.trim() === ""
+        ? "Can't be blank"
+        : isYearValid(value)
+        ? ""
+        : "Invalid year"
+    );
   };
 
   const handleCvcChange = (value) => {
     setCvc(value.slice(0, 3));
-    // Validate CVC (replace this with your actual validation logic)
-    setCvcError(value.trim() ? "" : "CVC is required");
+    setCvcError(
+      value.trim() === ""
+        ? "Can't be blank"
+        : isCvcValid(value)
+        ? ""
+        : "Invalid CVC format"
+    );
   };
 
   const handleSubmit = () => {
@@ -70,17 +112,45 @@ export default function App() {
     handleYearChange(yearValue);
     handleCvcChange(cvc);
 
-    // Check if there are no errors
+    // Check if there are no errors and all fields are filled
     if (
       !nameError &&
       !cardNumberError &&
       !monthError &&
       !yearError &&
-      !cvcError
+      !cvcError &&
+      name &&
+      cardNumber &&
+      monthValue &&
+      yearValue &&
+      cvc
     ) {
-      // Perform form submission logic
-      setConfirmed(true);
+      // Check if the card number is valid
+      if (isCardNumberValid(cardNumber)) {
+        // Perform form submission logic
+        setConfirmed(true);
+        setName("");
+        setCardNumber("");
+        setMonthValue("");
+        setYearValue("");
+        setCvc("");
+      } else {
+        // If card number is invalid, don't setConfirmed(true)
+        setConfirmed(false);
+      }
+    } else {
+      // If any field is empty or there are validation errors, don't setConfirmed(true)
+      setConfirmed(false);
     }
+
+    // Clear input fields only if confirmed is true
+    // if (confirmed) {
+    //   setName("");
+    //   setCardNumber("");
+    //   setMonthValue("");
+    //   setYearValue("");
+    //   setCvc("");
+    // }
   };
 
   return (
@@ -164,15 +234,6 @@ export default function App() {
                 <article className="flex items-center justify-between gap-8">
                   <div className="flex-1">
                     <label htmlFor="expiry_date">Exp. Date (MM/YY)</label>
-                    {/* <input
-                      type="month"
-                      name="expiry_date"
-                      id="expiry_date"
-                      placeholder="MM YY"
-                      required
-                      value={date}
-                      onChange={(e) => setDate(e.target.value)}
-                    /> */}
 
                     <div className="flex gap-4">
                       <div>
@@ -215,7 +276,7 @@ export default function App() {
                     </div>
                   </div>
 
-                  <div className="flex-1 ">
+                  <div className="flex-1 align-middle ">
                     <label htmlFor="cvc">CVC</label>
                     <input
                       className="hover:border-violet-500 hover:cursor-pointer"
@@ -232,7 +293,7 @@ export default function App() {
                   </div>
                 </article>
 
-                <button onClick={handleSubmit} className="btn">
+                <button onClick={handleSubmit} className="btn mt-4">
                   Confirm
                 </button>
 
@@ -260,7 +321,7 @@ function ThankYou({ setConfirmed }) {
           We've added your card details
         </p>
         <button
-          onClick={() => setConfirmed(false)}
+          onClick={() => setConfirmed(!setConfirmed)}
           className="btn block mx-auto mt-10 w-full"
         >
           Continue
