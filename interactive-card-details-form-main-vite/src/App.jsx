@@ -3,14 +3,85 @@ import bgMobile from "../images/bg-main-mobile.png";
 import bgDesktop from "../images/bg-main-desktop.png";
 import logo from "../images/card-logo.svg";
 import tick from "../images/icon-complete.svg";
-import { format } from "date-fns";
+// import { format } from "date-fns";
 
 export default function App() {
   const [confirmed, setConfirmed] = useState(false);
   const [name, setName] = useState("");
+  const [nameError, setNameError] = useState("");
+
   const [cardNumber, setCardNumber] = useState("");
-  const [date, setDate] = useState("01/23");
+  const [cardNumberError, setCardNumberError] = useState("");
+
+  // const [date, setDate] = useState("01/23");
+
+  const [monthValue, setMonthValue] = useState("");
+  const [monthError, setMonthError] = useState("");
+
+  const [yearValue, setYearValue] = useState("");
+  const [yearError, setYearError] = useState("");
+
   const [cvc, setCvc] = useState("");
+  const [cvcError, setCvcError] = useState("");
+
+  // Helper function to check for valid card number format
+  const isCardNumberValid = (value) => {
+    const cardNumberPattern = /^\d{4} \d{4} \d{4} \d{4}$/;
+    return cardNumberPattern.test(value);
+  };
+
+  const handleNameChange = (value) => {
+    setName(value);
+    // Validate name (replace this with your actual validation logic)
+    setNameError(value.trim() ? "" : "Name is required");
+  };
+
+  const handleCardNumberChange = (value) => {
+    setCardNumber(value);
+    // Validate card number format
+    setCardNumberError(
+      isCardNumberValid(value) ? "" : "Invalid card number format"
+    );
+  };
+
+  const handleMonthChange = (value) => {
+    setMonthValue(value.slice(0, 2));
+    // Validate month (replace this with your actual validation logic)
+    setMonthError(value.trim() ? "" : "Month is required");
+  };
+
+  const handleYearChange = (value) => {
+    setYearValue(value.slice(0, 2));
+    // Validate year (replace this with your actual validation logic)
+    setYearError(value.trim() ? "" : "Year is required");
+  };
+
+  const handleCvcChange = (value) => {
+    setCvc(value.slice(0, 3));
+    // Validate CVC (replace this with your actual validation logic)
+    setCvcError(value.trim() ? "" : "CVC is required");
+  };
+
+  const handleSubmit = () => {
+    // Validate all fields before submission
+    handleNameChange(name);
+    handleCardNumberChange(cardNumber);
+    handleMonthChange(monthValue);
+    handleYearChange(yearValue);
+    handleCvcChange(cvc);
+
+    // Check if there are no errors
+    if (
+      !nameError &&
+      !cardNumberError &&
+      !monthError &&
+      !yearError &&
+      !cvcError
+    ) {
+      // Perform form submission logic
+      setConfirmed(true);
+    }
+  };
 
   return (
     <>
@@ -37,7 +108,8 @@ export default function App() {
                     {name ? name : "Jane Appleseed"}
                   </li>
                   <li className="text-white text-base lg:text-xl tracking-widest">
-                    {format(new Date(date), "MM/yy")}
+                    {monthValue ? monthValue : "00"} /{" "}
+                    {yearValue ? yearValue : "00"}
                   </li>
                 </ul>
               </div>
@@ -56,6 +128,7 @@ export default function App() {
                 <div>
                   <label htmlFor="cardholder_name">Cardholder Name</label>
                   <input
+                    className="hover:border-violet-500 hover:cursor-pointer"
                     type="text"
                     name="cardholder_name"
                     id="cardholder_name"
@@ -64,11 +137,13 @@ export default function App() {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                   />
+                  {nameError && <p className="text-red-500">{nameError}</p>}
                 </div>
 
                 <div>
                   <label htmlFor="card_number">Card Number</label>
                   <input
+                    className="hover:border-violet-500 hover:cursor-pointer"
                     type="text"
                     name="card_number"
                     id="card_number"
@@ -81,12 +156,15 @@ export default function App() {
                       .trim()}
                     onChange={(e) => setCardNumber(e.target.value)}
                   />
+                  {cardNumberError && (
+                    <p className="text-red-500">{cardNumberError}</p>
+                  )}
                 </div>
 
                 <article className="flex items-center justify-between gap-8">
                   <div className="flex-1">
                     <label htmlFor="expiry_date">Exp. Date (MM/YY)</label>
-                    <input
+                    {/* <input
                       type="month"
                       name="expiry_date"
                       id="expiry_date"
@@ -94,12 +172,53 @@ export default function App() {
                       required
                       value={date}
                       onChange={(e) => setDate(e.target.value)}
-                    />
+                    /> */}
+
+                    <div className="flex gap-4">
+                      <div>
+                        <input
+                          className="hover:border-violet-500 hover:cursor-pointer"
+                          type="number"
+                          name="month"
+                          id="month"
+                          placeholder="MM"
+                          maxLength={2}
+                          required
+                          value={monthValue}
+                          onChange={(e) =>
+                            setMonthValue(e.target.value.slice(0, 2))
+                          }
+                        />
+                        {monthError && (
+                          <p className="text-red-500">{monthError}</p>
+                        )}
+                      </div>
+
+                      <div>
+                        <input
+                          className="hover:border-violet-500 hover:cursor-pointer"
+                          type="number"
+                          name="year"
+                          id="year"
+                          placeholder="YY"
+                          maxLength={2}
+                          required
+                          value={yearValue}
+                          onChange={(e) =>
+                            setYearValue(e.target.value.slice(0, 2))
+                          }
+                        />
+                        {yearError && (
+                          <p className="text-red-500">{yearError}</p>
+                        )}
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="flex-1">
+                  <div className="flex-1 ">
                     <label htmlFor="cvc">CVC</label>
                     <input
+                      className="hover:border-violet-500 hover:cursor-pointer"
                       type="number"
                       name="cvc"
                       id="cvc"
@@ -107,14 +226,17 @@ export default function App() {
                       maxLength={3}
                       required
                       value={cvc}
-                      onChange={(e) => setCvc(e.target.value)}
+                      onChange={(e) => setCvc(e.target.value.slice(0, 3))}
                     />
+                    {cvcError && <p className="text-red-500">{cvcError}</p>}
                   </div>
                 </article>
 
-                <button onClick={() => setConfirmed(true)} className="btn">
+                <button onClick={handleSubmit} className="btn">
                   Confirm
                 </button>
+
+                {/* Display error messages */}
               </form>
             )}
 
