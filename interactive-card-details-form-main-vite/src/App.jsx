@@ -37,17 +37,18 @@ export default function App() {
 
   const isMonthValid = (value) => {
     const monthPattern = /^(0[1-9]|1[0-2])$/;
-    return monthPattern.test(value);
+
+    return monthPattern.test(value.slice(0, 2));
   };
 
   const isYearValid = (value) => {
     const yearPattern = /^\d{2}$/;
-    return yearPattern.test(value);
+    return yearPattern.test(value.slice(0, 2));
   };
 
   const isCvcValid = (value) => {
     const cvcPattern = /^\d{3}$/;
-    return cvcPattern.test(value);
+    return cvcPattern.test(value.slice(0, 3));
   };
 
   const handleInputs = {
@@ -60,17 +61,25 @@ export default function App() {
     },
 
     handleMonthChange: (value) => {
-      setFormValue({ ...formValue, monthValue: value.slice(0, 2) });
+      setFormValue({ ...formValue, monthValue: value });
     },
 
     handleYearChange: (value) => {
-      setFormValue({ ...formValue, yearValue: value.slice(0, 2) });
+      setFormValue({ ...formValue, yearValue: value });
     },
 
     handleCvcChange: (value) => {
-      setFormValue({ ...formValue, cvc: value.slice(0, 3) });
+      setFormValue({ ...formValue, cvc: value });
     },
   };
+
+  function handleAllInputs(formValue) {
+    handleInputs.handleNameChange(formValue.name);
+    handleInputs.handleCardNumberChange(formValue.cardNumber);
+    handleInputs.handleMonthChange(formValue.monthValue);
+    handleInputs.handleYearChange(formValue.yearValue);
+    handleInputs.handleCvcChange(formValue.cvc);
+  }
 
   function ErrorCheck(formValue) {
     setFormError({
@@ -115,12 +124,8 @@ export default function App() {
   const handleSubmit = (e) => {
     e.preventDefault();
     // Validate all fields before submission
-    handleInputs.handleNameChange(formValue.name);
-    handleInputs.handleCardNumberChange(formValue.cardNumber);
-    handleInputs.handleMonthChange(formValue.monthValue);
-    handleInputs.handleYearChange(formValue.yearValue);
-    handleInputs.handleCvcChange(formValue.cvc);
-
+    handleAllInputs(formValue);
+    //Error check all fields before submission
     ErrorCheck(formValue);
 
     // Check if there are no errors and all fields are filled
